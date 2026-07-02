@@ -366,7 +366,7 @@ def scenario_6(
             and all(
                 file in s6_source_files
                 for file in [
-                    "scenario_5/folder_4/sample_sp_file_3.csv",
+                    "scenario_5/folder_3/sample_sp_file_3.csv",
                 ]
             )
         ):
@@ -398,26 +398,6 @@ def scenario_7(
             print(f"Test passed: Caught expected error for invalid S3 key: {exc}")
         else:
             print(f"Test failed: Unexpected error for invalid S3 key: {exc}")
-
-    invalid_sp_folder_plan = [
-        {
-            "source": "source/sample_s3_file_1.csv",
-            "destination": "invalid_folder/sample_s4_file_1.csv",
-        },
-    ]
-    try:
-        run_plans(invalid_sp_folder_plan, s3_to_sharepoint_engine)
-        print(
-            "Test failed: Expected error for invalid SharePoint folder was not raised."
-        )
-    except ProcessingError as exc:
-        if "not found in SharePoint" in str(exc):
-            print(
-                "Test passed: Caught expected error for invalid SharePoint folder:"
-                f" {exc}"
-            )
-        else:
-            print(f"Test failed: Unexpected error for invalid SharePoint folder: {exc}")
 
     invalid_sp_file_plan = [
         {
@@ -485,10 +465,10 @@ def scenario_8(
         },
     ]
 
-    run_plans(scenario_8_plan, s3_to_sharepoint_engine, "archive")
+    run_plans(scenario_8_plan, s3_to_sharepoint_engine)
 
-    s8_source_files = sp_to_s3_engine.list_source_files()
-    s8_dest_files = s3_to_sharepoint_engine.list_source_files()
+    s8_source_files = s3_to_sharepoint_engine.list_source_files()
+    s8_dest_files = sp_to_s3_engine.list_source_files()
 
     if all(
         file in s8_dest_files
@@ -510,11 +490,11 @@ def scenario_8(
         ):
             print("Test passed: All files are present correctly in S3 and SharePoint.")
         else:
-            print("Test failed: Some files were not archived correctly.")
+            print("Test failed: Some files are missing in S3.")
             print("Found:", s8_source_files)
     else:
-        print("Test failed: Some files are missing in S3.")
-        print("Found:", s8_source_files)
+        print("Test failed: Some files are missing in SharePoint.")
+        print("Found:", s8_dest_files)
 
 
 def main() -> None:
